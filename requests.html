@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DJ Song Requests</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 20px;
+    }
+    #queue {
+      margin-top: 20px;
+      padding: 10px;
+      border: 1px solid #ccc;
+      max-width: 400px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .song {
+      display: flex;
+      justify-content: space-between;
+      padding: 5px 0;
+    }
+    .dj-button {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>Request a Song</h1>
+  <form id="songForm">
+    <input type="text" id="songName" placeholder="Enter song name" required>
+    <input type="text" id="artistName" placeholder="Enter artist name" required>
+    <button type="submit">Submit</button>
+  </form>
+
+  <h2>Song Queue</h2>
+  <div id="queue"></div>
+
+  <script>
+    const queue = [];
+    const isDJ = confirm("Are you the DJ? Click OK to enable management controls.");
+
+    // Show management controls for the DJ
+    if (isDJ) {
+      document.body.classList.add('dj-mode');
+    }
+
+    document.getElementById('songForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const songName = document.getElementById('songName').value;
+      const artistName = document.getElementById('artistName').value;
+
+      // Add song to the queue
+      queue.push({ songName, artistName });
+      document.getElementById('songName').value = '';
+      document.getElementById('artistName').value = '';
+      renderQueue();
+    });
+
+    const renderQueue = () => {
+      const queueDiv = document.getElementById('queue');
+      queueDiv.innerHTML = '';
+      queue.forEach((song, index) => {
+        const songDiv = document.createElement('div');
+        songDiv.classList.add('song');
+        songDiv.innerHTML = `
+          <span>${song.songName} - ${song.artistName}</span>
+          ${isDJ ? `<button class="dj-button" onclick="removeSong(${index})">Remove</button>` : ''}
+        `;
+        queueDiv.appendChild(songDiv);
+      });
+    };
+
+    const removeSong = (index) => {
+      queue.splice(index, 1);
+      renderQueue();
+    };
+
+    renderQueue();
+  </script>
+</body>
+</html>
